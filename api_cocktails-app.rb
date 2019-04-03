@@ -11,36 +11,41 @@ def run_cocktails
     @choice = gets.chomp
 
     response = HTTParty.get("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=#{@choice}")
-
-    if response["drinks"].length - 1 > 0
-        puts "\nThere are #{response["drinks"].length} versions of the #{@choice}"
-    end
-
-    i = 0
-    while i <= response["drinks"].length - 1
-        puts "\n#{response["drinks"][i]["strDrink"].upcase.colorize(:blue).bold} \n\n"
-        ingredients = []
-        x = 1
-        counter = 0
-        while counter < response["drinks"].length
-            response["drinks"][i].each do |ingredient|
-                ingredients << "#{response["drinks"][i]["strMeasure#{x}"]} #{response["drinks"][i]["strIngredient#{x}"]}"
-                x += 1
-            end 
-            counter += 1
+    
+    if response["drinks"] != nil
+        if response["drinks"].length - 1 > 0
+            puts "\nThere are #{response["drinks"].length} versions of the #{@choice}"
         end
-        puts "Ingredients".upcase.colorize(:light_black).bold
-        ingredients.each do |ingredient|
-            if ingredient.length > 2
-                puts ingredient.lstrip
+
+        i = 0
+        while i <= response["drinks"].length - 1
+            puts "\n#{response["drinks"][i]["strDrink"].upcase.colorize(:blue).bold} \n\n"
+            ingredients = []
+            x = 1
+            counter = 0
+            while counter < response["drinks"].length
+                response["drinks"][i].each do |ingredient|
+                    ingredients << "#{response["drinks"][i]["strMeasure#{x}"]} #{response["drinks"][i]["strIngredient#{x}"]}"
+                    x += 1
+                end 
+                counter += 1
             end
+            puts "Ingredients".upcase.colorize(:light_black).bold
+            ingredients.each do |ingredient|
+                if ingredient.length > 2
+                    puts ingredient.lstrip
+                end
+            end
+
+            puts "\nInstructions".upcase.colorize(:light_black).bold + "\n#{response["drinks"][i]["strInstructions"]} \n\n"
+            i += 1
         end
 
-        puts "\nInstructions".upcase.colorize(:light_black).bold + "\n#{response["drinks"][i]["strInstructions"]} \n\n"
-        i += 1
+        puts "Enjoy your #{@choice.capitalize}!\n".colorize(:green)
+    else
+        puts "We don't have that cocktail recipe"
+        run_cocktails
     end
-
-    puts "Enjoy your #{@choice.capitalize}!\n".colorize(:green)
 end
 
 run_cocktails
